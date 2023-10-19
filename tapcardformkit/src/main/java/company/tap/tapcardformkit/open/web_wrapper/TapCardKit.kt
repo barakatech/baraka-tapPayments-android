@@ -47,6 +47,7 @@ class TapCardKit : LinearLayout {
     lateinit var webViewFrame: FrameLayout
     lateinit var webFrame3ds: FrameLayout
     private var cardPrefillPair:Pair<String,String> = Pair("","")
+    private var cardExtraPrefillPair:Pair<String,String> = Pair("","")
 
     companion object{
          var alreadyEvaluated = false
@@ -134,12 +135,21 @@ class TapCardKit : LinearLayout {
      }
 
 
-     fun init(configuraton: CardConfiguraton,cardNumber: String="",cardExpiry:String="") {
+     fun init(
+         configuraton: CardConfiguraton,
+         cardNumber: String="",
+         cardExpiry:String="",
+         cardCvv:String="",
+         cardHolderName:String=""
+     ) {
         cardConfiguraton = configuraton
          Log.e("carddata cardnumber",cardNumber.toString())
          Log.e("carddata expiry",cardExpiry.toString())
+         Log.e("carddata cvv",cardCvv.toString())
+         Log.e("carddata cardHolderName",cardHolderName.toString())
 
          cardPrefillPair = Pair(cardNumber,cardExpiry)
+         cardExtraPrefillPair = Pair(cardCvv,cardHolderName)
         applyThemeForShimmer()
       //  startShimmer()
         when (configuraton) {
@@ -228,7 +238,12 @@ class TapCardKit : LinearLayout {
                 if (request?.url.toString().contains(CardFormWebStatus.onReady.name)) {
                     DataConfiguration.getTapCardStatusListener()?.onReady()
                     if (cardPrefillPair.first.length>=7){
-                        fillCardNumber(cardNumber = cardPrefillPair.first, expiryDate = cardPrefillPair.second,"","")
+                        fillCardNumber(
+                            cardNumber = cardPrefillPair.first,
+                            expiryDate = cardPrefillPair.second,
+                            cvv = cardExtraPrefillPair.first,
+                            cardHolderName = cardExtraPrefillPair.second
+                        )
                     }
                 }
                 if (request?.url.toString().contains(CardFormWebStatus.onValidInput.name)) {
