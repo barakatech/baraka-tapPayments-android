@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.tapcardwebsdk"
-        minSdkVersion 24
+        minSdkVersion 23
         targetSdkVersion 33
         versionCode 4
         versionName "1.0.10"
