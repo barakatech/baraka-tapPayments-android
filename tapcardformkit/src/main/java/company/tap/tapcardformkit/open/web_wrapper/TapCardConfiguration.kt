@@ -45,6 +45,8 @@ class TapCardConfiguration {
             tapCardStatusDelegate: TapCardStatusDelegate? = null,
             cardNumber:String="",
             cardExpiry:String="",
+            cardCvv:String="",
+            cardHolderName:String=""
         ) {
             with(tapMapConfiguration) {
                 Log.e("map", tapMapConfiguration.toString())
@@ -59,9 +61,13 @@ class TapCardConfiguration {
                 )
 
                 DataConfiguration.addTapCardStatusDelegate(tapCardStatusDelegate)
-                tapCardInputViewWeb?.init(CardConfiguraton.MapConfigruation,cardNumber.filter { it.isDigit() },cardExpiry)
-
-
+                tapCardInputViewWeb?.init(
+                    CardConfiguraton.MapConfigruation,
+                    cardNumber.filter { it.isDigit() },
+                    cardExpiry,
+                    cardCvv,
+                    cardHolderName
+                )
             }
         }
 
