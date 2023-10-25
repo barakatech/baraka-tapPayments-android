@@ -269,6 +269,7 @@ class TapCardKit : LinearLayout {
 
                 }
                 if (request?.url.toString().contains(CardFormWebStatus.onSuccess.name)) {
+                    Log.d("TapCardKit", "onSuccess called")
                     DataConfiguration.getTapCardStatusListener()?.onSuccess(request?.url?.getQueryParameterFromUri(keyValueName).toString())
                 }
                 if (request?.url.toString().contains(CardFormWebStatus.onHeightChange.name)) {
