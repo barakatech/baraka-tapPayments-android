@@ -118,6 +118,10 @@ object DataConfiguration {
         this.tapCardStatusDelegate = _tapCardStatuDelegate
     }
 
+    fun removeTapCardStatusDelegate() {
+        this.tapCardStatusDelegate = null
+    }
+
     fun getTapCardStatusListener(): TapCardStatusDelegate? {
         return tapCardStatusDelegate
     }
