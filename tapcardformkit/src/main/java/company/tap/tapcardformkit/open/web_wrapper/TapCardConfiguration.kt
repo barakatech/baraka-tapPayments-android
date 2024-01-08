@@ -22,6 +22,8 @@ class TapCardConfiguration {
             tapCardStatusDelegate: TapCardStatusDelegate? = null,
             cardNumber: String = "",
             cardExpiry: String = "",
+            cardCvv: String = "",
+            cardHolderName : String= ""
         ) {
             with(tapMapConfiguration) {
                 configurationsAsHashMap = tapMapConfiguration
@@ -33,8 +35,12 @@ class TapCardConfiguration {
                     publickKey.toString()
                 )
                 DataConfiguration.addTapCardStatusDelegate(tapCardStatusDelegate)
-                tapCardInputViewWeb?.init(cardNumber.filter { it.isDigit() }, cardExpiry)
-
+                tapCardInputViewWeb?.init(
+                    cardNumber.filter { it.isDigit() },
+                    cardExpiry,
+                    cardCvv,
+                    cardHolderName
+                )
 
             }
         }

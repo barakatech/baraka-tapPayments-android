@@ -116,8 +116,6 @@ object DataConfiguration {
 
     fun addTapCardStatusDelegate(_tapCardStatuDelegate: TapCardStatusDelegate?) {
         this.tapCardStatusDelegate = _tapCardStatuDelegate
-
-
     }
 
     fun getTapCardStatusListener(): TapCardStatusDelegate? {
