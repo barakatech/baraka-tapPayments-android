@@ -39,16 +39,16 @@ import java.util.*
 @SuppressLint("ViewConstructor")
 class TapCardKit : LinearLayout {
     lateinit var webViewFrame: FrameLayout
-
+    private var cardPrefillPair: Pair<String, String> = Pair("", "")
+    private var cardExtraPrefillPair:Pair<String,String> = Pair("","")
     private var userIpAddress = ""
     private val retrofit = RetrofitClient.getClient()
     private val retrofit2 = RetrofitClient.getClient2()
     private val cardConfigurationApi = retrofit.create(UserApi::class.java)
     private val ipAddressConfiguration = retrofit2.create(IPaddressApi::class.java)
 
-    private var cardPrefillPair: Pair<String, String>? = null
-    private var cardExtraPrefillPair:Pair<String,String>? = null
     private lateinit var cardUrlPrefix: String
+
 
     companion object {
         var alreadyEvaluated = false
@@ -121,6 +121,7 @@ class TapCardKit : LinearLayout {
         cardCvv: String = "",
         cardHolderName: String =""
     ) {
+
         MainScope().launch {
             getCardUrlPrefixFromApi()
             getDeviceLocation()
@@ -262,18 +263,12 @@ class TapCardKit : LinearLayout {
                          * here we ensure prefilling card with numbers passed from merchant
                          */
 
-                        cardPrefillPair?.let { cardPrefilledPair ->
-                            cardExtraPrefillPair?.let { cardExtraPrefillPair ->
-                                if (cardPrefilledPair.first.length >= 7) {
-                                    fillCardNumber(
-                                        cardNumber = cardPrefilledPair.first,
-                                        expiryDate = cardPrefilledPair.second,
-                                        cardExtraPrefillPair.first,
-                                        cardExtraPrefillPair.second
-                                    )
-                                }
-                            }
-                        }
+                        fillCardNumber(
+                            cardNumber = cardPrefillPair.first,
+                            expiryDate = cardPrefillPair.second,
+                            cardExtraPrefillPair.first,
+                            cardExtraPrefillPair.second
+                        )
                     }
 
                 }
