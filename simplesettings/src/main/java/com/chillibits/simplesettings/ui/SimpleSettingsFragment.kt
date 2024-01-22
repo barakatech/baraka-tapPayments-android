@@ -203,8 +203,6 @@ internal class SimpleSettingsFragment : PreferenceFragmentCompat() {
         entries = sp.entries.toTypedArray()
        // entryValues = (sp.values.indices).map { it.toString() }.toTypedArray()
         entryValues =  sp.values.toTypedArray()
-        println("you default indez is"+entryValues[sp.defaultIndex].toString())
-        println("you default indez is"+sp.defaultIndex)
         setValueIndex(sp.defaultIndex);
         setDefaultValue(entryValues[sp.defaultIndex].toString())
 

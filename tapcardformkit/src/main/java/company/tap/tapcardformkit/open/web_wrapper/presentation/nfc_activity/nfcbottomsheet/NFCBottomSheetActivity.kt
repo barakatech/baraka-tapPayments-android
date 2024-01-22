@@ -60,8 +60,6 @@ class NFCBottomSheetActivity : AppCompatActivity() {
                 .subscribe({ emvCard: TapEmvCard? ->
                     if (emvCard != null) {
                         // tapCheckoutFragment.viewModel?.handleNFCScannedResult(emvCard)
-                        println("emvCard${emvCard}")
-                        println("emvCardexpireDate ${emvCard.cardNumber
                         }")
                         convertDateString(emvCard)
 
@@ -85,7 +83,6 @@ class NFCBottomSheetActivity : AppCompatActivity() {
                             }
                             if (e is NullPointerException || e is IllegalArgumentException) {
                                 // that's likely a bug in the application
-                                println("eee$e")
                                 Thread.currentThread().uncaughtExceptionHandler
                                     .uncaughtException(Thread.currentThread(), e)
                                 Log.e("warn", "NullPointerException to do", e)
@@ -124,7 +121,6 @@ class NFCBottomSheetActivity : AppCompatActivity() {
         var expDateString :String?=null
         //  println("emvCard.getExpireDate()"+emvCard.getExpireDate())
         val dateParts: CharSequence? = DateFormat.format("M/y", emvCard.getExpireDate())
-        println("dateparts" + dateParts?.length)
         if (dateParts?.contains("/") == true) {
             if (dateParts.length <= 3) {
                 return

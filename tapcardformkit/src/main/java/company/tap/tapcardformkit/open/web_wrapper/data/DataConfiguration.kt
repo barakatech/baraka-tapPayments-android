@@ -77,7 +77,6 @@ object DataConfiguration {
             }
         } else if (urlString != null) {
             if (context != null) {
-                println("urlString>>>" + urlString)
                 ThemeManager.loadTapTheme(context, urlString, "lighttheme")
             }
         }

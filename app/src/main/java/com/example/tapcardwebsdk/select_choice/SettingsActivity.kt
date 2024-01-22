@@ -396,10 +396,8 @@ class SettingsActivity : AppCompatActivity(), SimpleSettingsConfig.PreferenceCal
 
 
         getPrefObserver(this@SettingsActivity, "amountKey", Observer<String> { value ->
-            println("vall"+value)
         })
 
-        println("vall ss"+getPrefs().getString("selectedlangKey","en"))
             val intent = Intent(this, MainActivity::class.java)
             intent.putExtra("languageSelected", if (getPrefStringValue("selectedlangKey","") == "0") "en" else getPrefStringValue("selectedlangKey", default = "en"))
             intent.putExtra("themeSelected", if (getPrefStringValue("selectedthemeKey","") == "1") TapTheme.light.name else  getPrefStringValue("selectedthemeKey","light"))

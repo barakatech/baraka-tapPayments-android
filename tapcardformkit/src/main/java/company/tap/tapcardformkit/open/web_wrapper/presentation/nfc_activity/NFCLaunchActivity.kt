@@ -67,8 +67,6 @@ fun handleNFCResult(intent: Intent?) {
             .subscribe({ emvCard: TapEmvCard? ->
                 if (emvCard != null) {
                     // tapCheckoutFragment.viewModel?.handleNFCScannedResult(emvCard)
-                    println("emvCard${emvCard}")
-                    println("emvCardexpireDate ${emvCard.cardNumber
                     }")
                     convertDateString(emvCard)
 
@@ -92,7 +90,6 @@ fun handleNFCResult(intent: Intent?) {
                         }
                         if (e is NullPointerException || e is IllegalArgumentException) {
                             // that's likely a bug in the application
-                            println("eee$e")
                             Thread.currentThread().uncaughtExceptionHandler
                                 .uncaughtException(Thread.currentThread(), e)
                             Log.e("warn", "NullPointerException to do", e)
@@ -131,7 +128,6 @@ private fun displayError(message: String?) {
         var expDateString :String?=null
         //  println("emvCard.getExpireDate()"+emvCard.getExpireDate())
         val dateParts: CharSequence? = DateFormat.format("M/y", emvCard.getExpireDate())
-        println("dateparts" + dateParts?.length)
         if (dateParts?.contains("/") == true) {
             if (dateParts.length <= 3) {
                 return

@@ -411,7 +411,6 @@ class SelectChoiceActivity : AppCompatActivity() {
 
     fun startTokenizationactivity(view: View) {
         if (::selectedUserLanguage.isInitialized && ::selectedUserTheme.isInitialized) {
-            println("defaultCardHolderName is" + defaultCardHolderName)
             val intent = Intent(this, MainActivity::class.java)
             intent.putExtra("languageSelected", selectedUserLanguage)
             intent.putExtra("themeSelected", selectedUserTheme)

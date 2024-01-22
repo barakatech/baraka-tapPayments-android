@@ -277,7 +277,6 @@ class MainActivity : AppCompatActivity() {
 
                     Toast.makeText(this@MainActivity, "onSuccess $data", Toast.LENGTH_SHORT).show()
                     Log.e("data",data.toString())
-                    println("onSuccess $data")
                 }
 
                 override fun onReady() {

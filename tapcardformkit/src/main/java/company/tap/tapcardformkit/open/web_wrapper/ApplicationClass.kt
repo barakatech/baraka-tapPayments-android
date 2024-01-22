@@ -40,7 +40,6 @@ class ApplicationClass : Application() {
             }
             if (e is NullPointerException || e is IllegalArgumentException) {
                 // that’s likely a bug in the application
-                println("eee$e")
                 Thread.currentThread().uncaughtExceptionHandler
                     .uncaughtException(Thread.currentThread(), e)
                 return@Consumer
