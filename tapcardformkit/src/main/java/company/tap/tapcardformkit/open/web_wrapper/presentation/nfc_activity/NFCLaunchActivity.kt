@@ -67,7 +67,6 @@ fun handleNFCResult(intent: Intent?) {
             .subscribe({ emvCard: TapEmvCard? ->
                 if (emvCard != null) {
                     // tapCheckoutFragment.viewModel?.handleNFCScannedResult(emvCard)
-                    }")
                     convertDateString(emvCard)
 
                 }

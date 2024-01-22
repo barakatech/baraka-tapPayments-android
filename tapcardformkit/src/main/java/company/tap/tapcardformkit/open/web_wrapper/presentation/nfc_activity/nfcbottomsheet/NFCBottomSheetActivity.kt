@@ -60,7 +60,6 @@ class NFCBottomSheetActivity : AppCompatActivity() {
                 .subscribe({ emvCard: TapEmvCard? ->
                     if (emvCard != null) {
                         // tapCheckoutFragment.viewModel?.handleNFCScannedResult(emvCard)
-                        }")
                         convertDateString(emvCard)
 
                     }
