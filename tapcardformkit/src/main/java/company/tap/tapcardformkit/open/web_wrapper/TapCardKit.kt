@@ -14,7 +14,6 @@ import android.webkit.*
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.core.view.*
-import cards.pay.paycardsrecognizer.sdk.Card
 import com.google.gson.Gson
 import company.tap.nfcreader.open.utils.TapNfcUtils
 import company.tap.tapcardformkit.*
@@ -40,16 +39,16 @@ import java.util.*
 @SuppressLint("ViewConstructor")
 class TapCardKit : LinearLayout {
     lateinit var webViewFrame: FrameLayout
-    private var cardPrefillPair: Pair<String, String> = Pair("", "")
-    private var cardExtraPrefillPair:Pair<String,String> = Pair("","")
+
     private var userIpAddress = ""
     private val retrofit = RetrofitClient.getClient()
     private val retrofit2 = RetrofitClient.getClient2()
     private val cardConfigurationApi = retrofit.create(UserApi::class.java)
     private val ipAddressConfiguration = retrofit2.create(IPaddressApi::class.java)
 
+    private var cardPrefillPair: Pair<String, String>? = null
+    private var cardExtraPrefillPair:Pair<String,String>? = null
     private lateinit var cardUrlPrefix: String
-
 
     companion object {
         var alreadyEvaluated = false
@@ -58,7 +57,6 @@ class TapCardKit : LinearLayout {
         lateinit var cardWebview: WebView
         var languageThemePair: Pair<String?, String?> = Pair("", "")
 
-        var card: Card? = null
         fun fillCardNumber(
             cardNumber: String,
             expiryDate: String,
@@ -123,7 +121,6 @@ class TapCardKit : LinearLayout {
         cardCvv: String = "",
         cardHolderName: String =""
     ) {
-
         MainScope().launch {
             getCardUrlPrefixFromApi()
             getDeviceLocation()
@@ -264,13 +261,18 @@ class TapCardKit : LinearLayout {
                         /**
                          * here we ensure prefilling card with numbers passed from merchant
                          */
-                        if (cardPrefillPair.first.length >= 7) {
-                            fillCardNumber(
-                                cardNumber = cardPrefillPair.first,
-                                expiryDate = cardPrefillPair.second,
-                                cardExtraPrefillPair.first,
-                                cardExtraPrefillPair.second
-                            )
+
+                        cardPrefillPair?.let { cardPrefilledPair ->
+                            cardExtraPrefillPair?.let { cardExtraPrefillPair ->
+                                if (cardPrefilledPair.first.length >= 7) {
+                                    fillCardNumber(
+                                        cardNumber = cardPrefilledPair.first,
+                                        expiryDate = cardPrefilledPair.second,
+                                        cardExtraPrefillPair.first,
+                                        cardExtraPrefillPair.second
+                                    )
+                                }
+                            }
                         }
                     }
 
