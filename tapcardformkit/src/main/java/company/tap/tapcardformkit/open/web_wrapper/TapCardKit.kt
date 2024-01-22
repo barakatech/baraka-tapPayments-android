@@ -131,7 +131,6 @@ class TapCardKit : LinearLayout {
             cardExtraPrefillPair = Pair(cardCvv,cardHolderName)
             applyThemeForShimmer()
             val url = "${cardUrlPrefix}${encodeConfigurationMapToUrl(DataConfiguration.configurationsAsHashMap)}"
-            Log.e("url", url.toString())
             cardWebview.post { cardWebview.loadUrl(url) }
         }
 
@@ -235,20 +234,22 @@ class TapCardKit : LinearLayout {
             webView: WebView?,
             request: WebResourceRequest?
         ): Boolean {
+            val url = request?.url ?: return false
+            val absoluteUrl = url.toString()
 
             /**
              * main checker if url start with "tapCardWebSDK://"
              */
-            if (request?.url.toString().startsWith(CardWebUrlPrefix, ignoreCase = true)) {
+            if (absoluteUrl.startsWith(CardWebUrlPrefix, ignoreCase = true)) {
                 /**
                  * listen for states of cardWebStatus of onReady , onValidInput .. etc
                  */
-                if (request?.url.toString().contains(CardFormWebStatus.onReady.name)) {
+                if (absoluteUrl.contains(CardFormWebStatus.onReady.name)) {
                     /**
                      * this scenario only for the first launch of the app , due to issue navigation
                      * of webview after shimmering , if issue appears [in first install only] init function isCalled again .
                      */
-                    val isFirstTime = Pref.getValue(context, "firstRun", "true").toString()
+                    val isFirstTime = Pref.getValue(context, "firstRun", "true")
                     if (isFirstTime == "true") {
                         init()
                         Pref.setValue(context, "firstRun", "false")
@@ -257,7 +258,7 @@ class TapCardKit : LinearLayout {
                         /**
                          * here we send ip Address to front end
                          */
-                        Log.e("ipAddress after", userIpAddress.toString())
+                        Log.e("ipAddress after", userIpAddress)
                         if (userIpAddress.isNotEmpty()) {
                             setIpAddress(userIpAddress)
                         }
@@ -275,13 +276,13 @@ class TapCardKit : LinearLayout {
                     }
 
                 }
-                if (request?.url.toString().contains(CardFormWebStatus.onValidInput.name)) {
+                if (absoluteUrl.contains(CardFormWebStatus.onValidInput.name)) {
                     val validInputValue =
-                        request?.url?.getQueryParameterFromUri(keyValueName).toString()
+                        url.getQueryParameterFromUri(keyValueName)
                     when (validInputValue.toBoolean()) {
                         true -> {
                             DataConfiguration.getTapCardStatusListener()?.onValidInput(
-                                request?.url?.getQueryParameterFromUri(keyValueName).toString()
+                                url.getQueryParameterFromUri(keyValueName)
                             )
 
                         }
@@ -289,20 +290,20 @@ class TapCardKit : LinearLayout {
                     }
 
                 }
-                if (request?.url.toString().contains(CardFormWebStatus.onError.name)) {
+                if (absoluteUrl.contains(CardFormWebStatus.onError.name)) {
                     DataConfiguration.getTapCardStatusListener()
-                        ?.onError(request?.url?.getQueryParameterFromUri(keyValueName).toString())
+                        ?.onError(url.getQueryParameterFromUri(keyValueName))
                 }
-                if (request?.url.toString().contains(CardFormWebStatus.onFocus.name)) {
+                if (absoluteUrl.contains(CardFormWebStatus.onFocus.name)) {
                     DataConfiguration.getTapCardStatusListener()?.onFocus()
 
                 }
-                if (request?.url.toString().contains(CardFormWebStatus.onSuccess.name)) {
+                if (absoluteUrl.contains(CardFormWebStatus.onSuccess.name)) {
                     DataConfiguration.getTapCardStatusListener()
-                        ?.onSuccess(request?.url?.getQueryParameterFromUri(keyValueName).toString())
+                        ?.onSuccess(url.getQueryParameterFromUri(keyValueName))
                 }
-                if (request?.url.toString().contains(CardFormWebStatus.onHeightChange.name)) {
-                    val newHeight = request?.url?.getQueryParameter(keyValueName)
+                if (absoluteUrl.contains(CardFormWebStatus.onHeightChange.name)) {
+                    val newHeight = url.getQueryParameter(keyValueName)
                     val params: ViewGroup.LayoutParams? = webViewFrame.layoutParams
                     params?.height =
                         webViewFrame.context.getDimensionsInDp(newHeight?.toInt() ?: 95)
@@ -313,26 +314,25 @@ class TapCardKit : LinearLayout {
 
 
                 }
-                if (request?.url.toString().contains(CardFormWebStatus.onBinIdentification.name)) {
+                if (absoluteUrl.contains(CardFormWebStatus.onBinIdentification.name)) {
                     DataConfiguration.getTapCardStatusListener()
                         ?.onBindIdentification(
-                            request?.url?.getQueryParameterFromUri(keyValueName).toString()
+                            url.getQueryParameterFromUri(keyValueName)
                         )
                 }
 
-                if (request?.url.toString().contains(CardFormWebStatus.on3dsRedirect.name)) {
+                if (absoluteUrl.contains(CardFormWebStatus.on3dsRedirect.name)) {
                     /**
                      * navigate to 3ds Activity
                      */
                     val queryParams =
-                        request?.url?.getQueryParameterFromUri(keyValueName).toString()
+                        url.getQueryParameterFromUri(keyValueName)
                     threeDsResponse = queryParams.getModelFromJson()
-                    Log.e("data", threeDsResponse.toString())
                     navigateTo3dsActivity()
 
 
                 }
-                if (request?.url.toString().contains(CardFormWebStatus.onScannerClick.name)) {
+                if (absoluteUrl.contains(CardFormWebStatus.onScannerClick.name)) {
                     /**
                      * navigate to Scanner Activity
                      */
@@ -340,7 +340,7 @@ class TapCardKit : LinearLayout {
                     (context).startActivity(intent)
 
                 }
-                if (request?.url.toString().contains(CardFormWebStatus.onNfcClick.name)) {
+                if (absoluteUrl.contains(CardFormWebStatus.onNfcClick.name)) {
                     /**
                      * navigate to NFC Activity
                      */
