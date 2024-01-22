@@ -258,7 +258,6 @@ class TapCardKit : LinearLayout {
                         /**
                          * here we send ip Address to front end
                          */
-                        Log.e("ipAddress after", userIpAddress)
                         if (userIpAddress.isNotEmpty()) {
                             setIpAddress(userIpAddress)
                         }
