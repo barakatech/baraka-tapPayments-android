@@ -121,16 +121,19 @@ class TapCardKit : LinearLayout {
         cardCvv: String = "",
         cardHolderName: String =""
     ) {
-
+        cardUrlPrefix = urlWebStarter
+        cardPrefillPair = Pair(cardNumber, cardExpiry)
+        cardExtraPrefillPair = Pair(cardCvv,cardHolderName)
+        applyThemeForShimmer()
+        val url = "${cardUrlPrefix}${encodeConfigurationMapToUrl(DataConfiguration.configurationsAsHashMap)}"
+        cardWebview.loadUrl(url)
+        /*
         MainScope().launch {
             getCardUrlPrefixFromApi()
             getDeviceLocation()
-            cardPrefillPair = Pair(cardNumber, cardExpiry)
-            cardExtraPrefillPair = Pair(cardCvv,cardHolderName)
-            applyThemeForShimmer()
-            val url = "${cardUrlPrefix}${encodeConfigurationMapToUrl(DataConfiguration.configurationsAsHashMap)}"
-            cardWebview.post { cardWebview.loadUrl(url) }
-        }
+             cardWebview.post { cardWebview.loadUrl(url) }
+
+        }*/
 
 
     }
