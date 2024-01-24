@@ -130,7 +130,7 @@ class TapCardKit : LinearLayout {
         cardCvv: String = "",
         cardHolderName: String =""
     ) {
-        if (cardUrlPrefix == null) {
+        if (cardUrlPrefix == null) { // To avoid duplicated load urls
             cardUrlPrefix = urlWebStarter
             cardPrefillPair = Pair(cardNumber, cardExpiry)
             cardExtraPrefillPair = Pair(cardCvv,cardHolderName)
@@ -278,6 +278,7 @@ class TapCardKit : LinearLayout {
 
                 }
                 if (request?.url.toString().contains(CardFormWebStatus.onError.name)) {
+                    cardUrlPrefix = null // To allow retry if error or success
                     DataConfiguration.getTapCardStatusListener()
                         ?.onError(request?.url?.getQueryParameterFromUri(keyValueName).toString())
                 }
@@ -286,6 +287,7 @@ class TapCardKit : LinearLayout {
 
                 }
                 if (request?.url.toString().contains(CardFormWebStatus.onSuccess.name)) {
+                    cardUrlPrefix = null // To allow retry if error or success
                     DataConfiguration.getTapCardStatusListener()
                         ?.onSuccess(request?.url?.getQueryParameterFromUri(keyValueName).toString())
                 }
