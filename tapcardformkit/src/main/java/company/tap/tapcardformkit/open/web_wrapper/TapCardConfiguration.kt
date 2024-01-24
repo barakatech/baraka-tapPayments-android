@@ -46,6 +46,10 @@ class TapCardConfiguration {
             }
         }
 
+        fun removeTapCardStatusDelegate() {
+            DataConfiguration.removeTapCardStatusDelegate()
+        }
+
         fun addOperatorHeaderField(
             tapCardInputViewWeb: TapCardKit?,
             context: Context,
@@ -76,10 +80,6 @@ class TapCardConfiguration {
 
 
         }
-    }
-
-    fun removeTapCardStatusDelegate() {
-        DataConfiguration.removeTapCardStatusDelegate()
     }
 }
 
