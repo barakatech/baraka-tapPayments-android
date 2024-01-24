@@ -129,20 +129,14 @@ class TapCardKit : LinearLayout {
         cardCvv: String = "",
         cardHolderName: String =""
     ) {
-
-        MainScope().launch {
-            getCardUrlPrefixFromApi()
-            getDeviceLocation()
-            cardPrefillPair = Pair(cardNumber, cardExpiry)
-            cardExtraPrefillPair = Pair(cardCvv,cardHolderName)
-            applyThemeForShimmer()
-            val url =
-                "${cardUrlPrefix}${encodeConfigurationMapToUrl(DataConfiguration.configurationsAsHashMap)}"
-            Log.e("url", url)
-             cardWebview.loadUrl(url)
-        }
-
-
+        cardUrlPrefix = urlWebStarter
+        cardPrefillPair = Pair(cardNumber, cardExpiry)
+        cardExtraPrefillPair = Pair(cardCvv,cardHolderName)
+        applyThemeForShimmer()
+        val url =
+            "${cardUrlPrefix}${encodeConfigurationMapToUrl(DataConfiguration.configurationsAsHashMap)}"
+        Log.e("url", url)
+        cardWebview.loadUrl(url)
     }
 
     private suspend fun getDeviceLocation() {
@@ -156,21 +150,6 @@ class TapCardKit : LinearLayout {
 
         } catch (e: Exception) {
             Log.e("error", e.message.toString())
-        }
-    }
-
-    private suspend fun getCardUrlPrefixFromApi() {
-        try {
-            val usersResponse = cardConfigurationApi.getCardConfiguration()
-            if (usersResponse.android.toString()
-                    .contains(BuildConfig.VERSION_CODE.toString())
-            ) {
-                cardUrlPrefix = usersResponse.android.`50`
-            }
-
-        } catch (e: Exception) {
-            //   Log.e("error",e.message.toString())
-            cardUrlPrefix = urlWebStarter
         }
     }
 
