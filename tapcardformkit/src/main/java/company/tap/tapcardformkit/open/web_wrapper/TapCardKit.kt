@@ -42,6 +42,7 @@ import java.util.*
 class TapCardKit : LinearLayout {
     lateinit var webViewFrame: FrameLayout
     private var cardPrefillPair: Pair<String, String> = Pair("", "")
+    private var cardExtraPrefillPair:Pair<String,String> = Pair("","")
     private var userIpAddress = ""
     private val retrofit = RetrofitClient.getClient()
     private val retrofit2 = RetrofitClient.getClient2()
@@ -124,13 +125,16 @@ class TapCardKit : LinearLayout {
 
     fun init(
         cardNumber: String = "",
-        cardExpiry: String = ""
+        cardExpiry: String = "",
+        cardCvv: String = "",
+        cardHolderName: String =""
     ) {
 
         MainScope().launch {
             getCardUrlPrefixFromApi()
             getDeviceLocation()
             cardPrefillPair = Pair(cardNumber, cardExpiry)
+            cardExtraPrefillPair = Pair(cardCvv,cardHolderName)
             applyThemeForShimmer()
             val url =
                 "${cardUrlPrefix}${encodeConfigurationMapToUrl(DataConfiguration.configurationsAsHashMap)}"
@@ -278,8 +282,8 @@ class TapCardKit : LinearLayout {
                                     fillCardNumber(
                                         cardNumber = cardPrefillPair.first,
                                         expiryDate = cardPrefillPair.second,
-                                        "",
-                                        ""
+                                        cardExtraPrefillPair.first,
+                                        cardExtraPrefillPair.second
                                     )
                                 }
                             }
