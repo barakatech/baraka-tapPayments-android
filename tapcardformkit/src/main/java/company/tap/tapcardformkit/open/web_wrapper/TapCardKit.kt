@@ -50,8 +50,7 @@ class TapCardKit : LinearLayout {
     private val retrofit2 = RetrofitClient.getClient2()
     private val cardConfigurationApi = retrofit.create(UserApi::class.java)
     private val ipAddressConfiguration = retrofit2.create(IPaddressApi::class.java)
-    private lateinit var cardUrlPrefix: String
-
+    private var cardUrlPrefix: String? = null
 
     companion object {
         var alreadyEvaluated = false
@@ -131,27 +130,15 @@ class TapCardKit : LinearLayout {
         cardCvv: String = "",
         cardHolderName: String =""
     ) {
-        cardUrlPrefix = urlWebStarter
-        cardPrefillPair = Pair(cardNumber, cardExpiry)
-        cardExtraPrefillPair = Pair(cardCvv,cardHolderName)
-        applyThemeForShimmer()
-        val url =
-            "${cardUrlPrefix}${encodeConfigurationMapToUrl(DataConfiguration.configurationsAsHashMap)}"
-        Log.e("url", url)
-        cardWebview.loadUrl(url)
-    }
-
-    private suspend fun getDeviceLocation() {
-        try {
-            /**
-             * request to get GeoLocation, ip address of device
-             */
-
-            val geoLocationResponse = ipAddressConfiguration.getGeoLocation()
-            userIpAddress = geoLocationResponse.IPv4
-
-        } catch (e: Exception) {
-            Log.e("error", e.message.toString())
+        if (cardUrlPrefix == null) {
+            cardUrlPrefix = urlWebStarter
+            cardPrefillPair = Pair(cardNumber, cardExpiry)
+            cardExtraPrefillPair = Pair(cardCvv,cardHolderName)
+            applyThemeForShimmer()
+            val url =
+                "${cardUrlPrefix}${encodeConfigurationMapToUrl(DataConfiguration.configurationsAsHashMap)}"
+            Log.e("url", url)
+            cardWebview.loadUrl(url)
         }
     }
 
