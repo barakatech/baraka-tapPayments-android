@@ -116,8 +116,6 @@ object DataConfiguration {
 
     fun addTapCardStatusDelegate(_tapCardStatuDelegate: TapCardStatusDelegate?) {
         this.tapCardStatusDelegate = _tapCardStatuDelegate
-
-
     }
 
     fun removeTapCardStatusDelegate() {
@@ -145,10 +143,7 @@ object DataConfiguration {
             tapMapConfiguration = configurations,
             cardNumber = cardNumber ?: "", cardExpiry = cardExpiry ?: ""
         )
-
     }
-
-
 }
 
 interface TapCardStatusDelegate {

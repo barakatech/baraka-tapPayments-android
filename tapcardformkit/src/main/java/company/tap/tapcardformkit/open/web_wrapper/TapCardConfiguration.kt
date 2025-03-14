@@ -41,13 +41,7 @@ class TapCardConfiguration {
                     cardCvv,
                     cardHolderName
                 )
-
-
             }
-        }
-
-        fun removeTapCardStatusDelegate() {
-            DataConfiguration.removeTapCardStatusDelegate()
         }
 
         fun addOperatorHeaderField(
@@ -77,8 +71,10 @@ class TapCardConfiguration {
             hashMapHeader[HeadersMdn] = headers.mdn.toString()
             hashMapHeader[HeadersApplication] = headers.application.toString()
             configurationsAsHashMap?.put(headersKey, hashMapHeader)
+        }
 
-
+        fun removeTapCardStatusDelegate() {
+            DataConfiguration.removeTapCardStatusDelegate()
         }
     }
 }
