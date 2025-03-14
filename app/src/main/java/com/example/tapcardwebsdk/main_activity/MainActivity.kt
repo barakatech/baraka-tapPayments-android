@@ -13,7 +13,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.tapcardwebsdk.R
 import com.example.tapcardwebsdk.select_choice.SettingsActivity
-import company.tap.tapcardformkit.open.DataConfiguration
+import company.tap.tapcardformkit.open.CardDataConfiguration
 import company.tap.tapcardformkit.open.TapCardStatusDelegate
 import company.tap.tapcardformkit.open.web_wrapper.TapCardConfiguration
 import company.tap.tapcardformkit.open.web_wrapper.TapCardKit
@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         checkAndroidVersion()
         findViewById<TextView>(R.id.tokenizeBtn).setOnClickListener {
         //    findViewById<TapCardKit>(R.id.tapCardForm).generateTapToken()
-            DataConfiguration.generateToken(findViewById<TapCardKit>(R.id.tapCardForm))
+            CardDataConfiguration.generateToken(findViewById<TapCardKit>(R.id.tapCardForm))
 
         }
         /**
@@ -51,6 +51,8 @@ class MainActivity : AppCompatActivity() {
         val selectedLanguage: String = lang.toString()
         val selectedCurrency: String = intent.getStringExtra("selectedCurrency").toString()
         val selectedTheme: String = intent.getStringExtra("themeSelected").toString()
+        val custId= intent.getStringExtra("custIdKey")
+        val cardNameKey= intent.getStringExtra("cardNameKey")
         val cardNumber= intent.getStringExtra("cardNumberKey")
         val cardExpiry = intent.getStringExtra("cardExpiryKey")
         val selectedCardEdge = intent.getStringExtra("selectedCardEdge")
@@ -170,15 +172,17 @@ class MainActivity : AppCompatActivity() {
          */
         val name = java.util.HashMap<String,Any>()
         name.put("lang",selectedLanguage)
-        name.put("first", DataConfiguration.customerExample?.name?.get(0)?.first ?: "first")
-        name.put("middle",DataConfiguration.customerExample?.name?.get(0)?.middle ?: "middle")
-        name.put("last",DataConfiguration.customerExample?.name?.get(0)?.last ?: "last")
+        name.put("first", CardDataConfiguration.customerExample?.name?.get(0)?.first ?: "first")
+        name.put("middle",CardDataConfiguration.customerExample?.name?.get(0)?.middle ?: "middle")
+        name.put("last",CardDataConfiguration.customerExample?.name?.get(0)?.last ?: "last")
 
         /**
          * customer
          */
         val customer = java.util.HashMap<String,Any>()
-        customer.put("nameOnCard", "test")
+        if (cardNameKey != null) {
+            customer.put("nameOnCard", cardNameKey)
+        }
         customer.put("editable",cardHolder)
         customer.put("contact",contact)
         customer.put("name", listOf(name))
@@ -260,7 +264,7 @@ class MainActivity : AppCompatActivity() {
         configuration.put("purpose",purpose.toString())
         configuration.put("transaction",transaction)
         configuration.put("invoice",invoice)
-        configuration.put("merchant",merchant)
+       configuration.put("merchant",merchant)
         configuration.put("features",features)
         configuration.put("acceptance",acceptance)
         configuration.put("fieldVisibility",fieldVisibility)
@@ -268,42 +272,94 @@ class MainActivity : AppCompatActivity() {
         configuration.put("redirect",redirect)
         configuration.put("post",post)
 
+        println("configuration here"+configuration)
         Log.e("cardPrefil", "cardnumber + $cardNumber + card + $cardExpiry")
-        TapCardConfiguration.configureWithTapCardDictionaryConfiguration(
-            context = this,
-            tapCardInputViewWeb= findViewById<TapCardKit>(R.id.tapCardForm),
-           tapMapConfiguration =  configuration,
-          tapCardStatusDelegate =   object : TapCardStatusDelegate {
-                override fun onSuccess(data: String) {
+        if (cardNumber != null) {
+            if (cardExpiry != null) {
+               TapCardConfiguration.configureWithTapCardDictionaryConfiguration(
+                    context = this,
+                    tapCardInputViewWeb= findViewById<TapCardKit>(R.id.tapCardForm),
+                    tapMapConfiguration =  configuration,
+                    tapCardStatusDelegate =   object : TapCardStatusDelegate {
+                        override fun onCardSuccess(data: String) {
 
-                    Toast.makeText(this@MainActivity, "onSuccess $data", Toast.LENGTH_SHORT).show()
-                    Log.e("data",data.toString())
-                    println("onSuccess $data")
-                }
+                            Toast.makeText(this@MainActivity, "onSuccess $data", Toast.LENGTH_SHORT).show()
+                            Log.e("data",data.toString())
+                            println("onSuccess $data")
+                            findViewById<TextView>(R.id.textView_Logs).visibility = View.VISIBLE
+                            findViewById<TextView>(R.id.textView_Logs).setText("onSuccess $data")
 
-                override fun onReady() {
-                 //   Toast.makeText(this@MainActivity, "onReady", Toast.LENGTH_SHORT).show()
-                    findViewById<TextView>(R.id.tokenizeBtn).visibility = View.VISIBLE
+                        }
 
-                }
+                        override fun onCardReady() {
+                            //   Toast.makeText(this@MainActivity, "onReady", Toast.LENGTH_SHORT).show()
+                            findViewById<TextView>(R.id.tokenizeBtn).visibility = View.VISIBLE
+                            findViewById<TextView>(R.id.textView_Logs).visibility = View.VISIBLE
+                            findViewById<TextView>(R.id.textView_Logs).setText("onCardReady>>>>> ")
 
-              override fun onBindIdentification(data: String) {
-                  Log.e("data",data.toString())
+                        }
 
-              }
+                        override fun onBindIdentification(data: String) {
+                            Log.e("data",data.toString())
+                            findViewById<TextView>(R.id.textView_Logs).visibility = View.VISIBLE
+                            findViewById<TextView>(R.id.textView_Logs).setText("onBindIdentification>>>>> $data")
 
-
-                override fun onValidInput(isValid: String) {
-                }
-
-                override fun onError(error: String) {
-                    Toast.makeText(this@MainActivity, "onError ${error}", Toast.LENGTH_SHORT).show()
-                    Log.e("test",error.toString())
-
-                }
+                        }
 
 
-            })
+                        override fun onValidInput(isValid: String) {
+                        }
+
+                        override fun onChangeSaveCard(enabled: Boolean) {
+                            super.onChangeSaveCard(enabled)
+                            findViewById<TextView>(R.id.textView_Logs).visibility = View.VISIBLE
+                            findViewById<TextView>(R.id.textView_Logs).setText("onChangeSaveCard status>>>> $enabled")
+                            println("onChangeSaveCard status$enabled")
+                        }
+
+
+                        override fun onCardError(error: String) {
+                            Toast.makeText(this@MainActivity, "onError ${error}", Toast.LENGTH_SHORT).show()
+                            Log.e("test",error.toString())
+                            findViewById<TextView>(R.id.textView_Logs).visibility = View.VISIBLE
+                            findViewById<TextView>(R.id.textView_Logs).setText("onError $error")
+
+                        }
+
+
+                    },cardNumber,cardExpiry)
+    /*    Function used in flutter plugin        DataConfiguration.initializeSDK(this,configuration,object : TapCardStatusDelegate{
+                    override fun onSuccess(data: String) {
+
+                        Toast.makeText(this@MainActivity, "onSuccess $data", Toast.LENGTH_SHORT).show()
+                        Log.e("data",data.toString())
+                        println("onSuccess $data")
+                    }
+
+                    override fun onReady() {
+                        //   Toast.makeText(this@MainActivity, "onReady", Toast.LENGTH_SHORT).show()
+                        findViewById<TextView>(R.id.tokenizeBtn).visibility = View.VISIBLE
+
+                    }
+
+                    override fun onBindIdentification(data: String) {
+                        Log.e("data",data.toString())
+
+                    }
+
+
+                    override fun onValidInput(isValid: String) {
+                    }
+
+                    override fun onError(error: String) {
+                        Toast.makeText(this@MainActivity, "onError ${error}", Toast.LENGTH_SHORT).show()
+                        Log.e("test",error.toString())
+
+                    }
+
+                },findViewById<TapCardKit>(R.id.tapCardForm),cardNumber,cardExpiry)*/
+            }
+        }
 
 //        findViewById<WebView>(R.id.default_webview).settings.javaScriptEnabled = true
 //        findViewById<WebView>(R.id.default_webview).settings.domStorageEnabled = true

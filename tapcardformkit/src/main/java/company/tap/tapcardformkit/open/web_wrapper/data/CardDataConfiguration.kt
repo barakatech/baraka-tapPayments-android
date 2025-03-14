@@ -22,7 +22,7 @@ Copyright (c) 2022    Tap Payments.
 All rights reserved.
  **/
 @SuppressLint("StaticFieldLeak")
-object DataConfiguration {
+object CardDataConfiguration {
 
     private var tapCardStatusDelegate: TapCardStatusDelegate? = null
 
@@ -116,8 +116,6 @@ object DataConfiguration {
 
     fun addTapCardStatusDelegate(_tapCardStatuDelegate: TapCardStatusDelegate?) {
         this.tapCardStatusDelegate = _tapCardStatuDelegate
-
-
     }
 
     fun removeTapCardStatusDelegate() {
@@ -135,6 +133,7 @@ object DataConfiguration {
     fun initializeSDK(
         activity: Activity,
         configurations: HashMap<String, Any>,
+        tapCardStatusDelegate: TapCardStatusDelegate ,
         tapCardKit: TapCardKit,
         cardNumber: String = "",
         cardExpiry: String = ""
@@ -143,6 +142,7 @@ object DataConfiguration {
             context = activity,
             tapCardInputViewWeb = tapCardKit,
             tapMapConfiguration = configurations,
+            tapCardStatusDelegate = tapCardStatusDelegate,
             cardNumber = cardNumber ?: "", cardExpiry = cardExpiry ?: ""
         )
 
@@ -153,21 +153,23 @@ object DataConfiguration {
 
 interface TapCardStatusDelegate {
 
-    fun onSuccess(data: String)
+    fun onCardSuccess(data: String)
 
 
-    fun onReady() {}
+    fun onCardReady() {}
 
-    fun onFocus() {}
+    fun onCardFocus() {}
 
     fun onBindIdentification(data: String) {}
 
     fun onValidInput(isValid: String)
 
 
-    fun onError(error: String)
+    fun onCardError(error: String)
 
     fun onHeightChange(heightChange: String) {}
+
+    fun onChangeSaveCard(enabled: Boolean) {}
 
 
 }
