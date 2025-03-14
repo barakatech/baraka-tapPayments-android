@@ -14,7 +14,9 @@ const val chunkSize = 2048
 const val keyValueForAuthPayer = "auth_payer"
 
 //const val urlWebStarter = "https://demo.dev.tap.company/v2/sdk/checkout?type=card-iframe&configurations="
-const val urlWebStarter = "https://sdk.dev.tap.company/v2/card/wrapper?configurations="
+//var urlWebStarter = "https://sdk.dev.tap.company/v2/card/wrapper?configurations="
+var urlWebStarter = "https://sdk.beta.tap.company/v2/card/wrapper?configurations="
+//var urlWebStarter = ""
 //const val urlWebStarter = "https://sdk.staging.tap.company/v2/card/wrapper?configurations="
 const val lightLottieUrlJson = "https://tap-assets.b-cdn.net/card-sdk/shimmer/Light_Mode_Button_Loader.json"
 const val darkLottieUrlJson = "https://tap-assets.b-cdn.net/card-sdk/shimmer/Dark_Mode_Button_Loader.json"
@@ -28,7 +30,7 @@ const val operatorKey ="operator"
 const val headersKey ="headers"
 
 enum class CardFormWebStatus {
-    onReady, onFocus, onValidInput, onInvalidInput, onError, onSuccess, onBinIdentification, onHeightChange, on3dsRedirect,onScannerClick,onNfcClick
+    onReady, onFocus, onValidInput, onInvalidInput, onError, onSuccess, onBinIdentification, onHeightChange, on3dsRedirect,onScannerClick,onNfcClick,onChangeSaveCardLater
 }
 
 

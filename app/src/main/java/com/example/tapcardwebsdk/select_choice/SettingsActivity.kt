@@ -11,7 +11,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
 import android.widget.FrameLayout
-import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.preference.EditTextPreference
@@ -26,7 +25,7 @@ import com.example.tapcardwebsdk.R
 import com.example.tapcardwebsdk.main_activity.MainActivity
 import company.tap.tapcardformkit.getRandomNumbers
 import company.tap.tapcardformkit.getRandomTrx
-import company.tap.tapcardformkit.open.DataConfiguration
+import company.tap.tapcardformkit.open.CardDataConfiguration
 
 class SettingsActivity : AppCompatActivity(), SimpleSettingsConfig.PreferenceCallback {
     lateinit var settings:FrameLayout
@@ -361,7 +360,7 @@ class SettingsActivity : AppCompatActivity(), SimpleSettingsConfig.PreferenceCal
             findViewById<EditText>(R.id.trans_refrence).setText(getRandomTrx())
             findViewById<EditText>(R.id.order_id).setText(getRandomNumbers(17))
 
-            Log.e("data", DataConfiguration.authenticationExample.toString())
+            Log.e("data", CardDataConfiguration.authenticationExample.toString())
             true
 
         }
@@ -447,7 +446,7 @@ class SettingsActivity : AppCompatActivity(), SimpleSettingsConfig.PreferenceCal
 
             intent.putExtra("showPowerdBy", getPrefBooleanValue("displayPoweredByKey",true))
             intent.putExtra("publicKey", getPrefStringValue("publicKey","pk_test_YhUjg9PNT8oDlKJ1aE2fMRz7"))
-            intent.putExtra("merchantId", getPrefStringValue("merchantIdKey",""))
+            intent.putExtra("merchantId", getPrefStringValue("merchantIdKey","1124340"))
 
             /**
              * new config
@@ -461,7 +460,9 @@ class SettingsActivity : AppCompatActivity(), SimpleSettingsConfig.PreferenceCal
             intent.putExtra("selectedColorStyle", getPrefStringValue("selectedcolorstyleKey","colored"))
             intent.putExtra("cardHolder",  getPrefBooleanValue("displayHoldernameKey",true))
             intent.putExtra("cvv",getPrefBooleanValue("displayCVVKey",true))
+        intent.putExtra("custIdKey",getPrefStringValue("custIdKey",""))
         intent.putExtra("cardNumberKey",getPrefStringValue("cardNumberKey",""))
+        intent.putExtra("cardNameKey",getPrefStringValue("cardNameKey",""))
         intent.putExtra("cardExpiryKey", if (getPrefStringValue("cardExpiryKey","") == "1") "" else  getPrefStringValue("cardExpiryKey",""))
 
 

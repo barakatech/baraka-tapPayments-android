@@ -6,17 +6,20 @@ import android.os.Bundle
 import android.webkit.WebView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+
 import company.tap.cardscanner.CameraFragment
 import company.tap.cardscanner.TapCard
 import company.tap.cardscanner.TapScannerCallback
 import company.tap.cardscanner.TapTextRecognitionCallBack
 import company.tap.cardscanner.TapTextRecognitionML
 import company.tap.tapcardformkit.R
+import company.tap.tapcardformkit.open.web_wrapper.TapCardKit
 import company.tap.tapcardformkit.open.web_wrapper.TapCardKit.Companion.fillCardNumber
 
 private const val SCAN_CARD_ID = 101
 
-class ScannerActivity : AppCompatActivity(), TapTextRecognitionCallBack, TapScannerCallback {
+class ScannerActivity : AppCompatActivity(), TapTextRecognitionCallBack, TapScannerCallback{
+    //InlineViewCallback {
     lateinit var webView: WebView
     private var textRecognitionML: TapTextRecognitionML? = null
 
@@ -53,6 +56,24 @@ class ScannerActivity : AppCompatActivity(), TapTextRecognitionCallBack, TapScan
         super.onRestart()
         //finish()
     }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            SCAN_CARD_ID -> if (resultCode == Activity.RESULT_OK) {
+               /* val card = data!!.getParcelableExtra<Card>(ScanCardIntent.RESULT_PAYCARDS_CARD)
+                if (card != null) {
+                    fillCardNumber(cardNumber = card?.cardNumber.toString(), cardHolderName =card?.cardHolderName ?: "" , cvv ="" , expiryDate =card?.expirationDate ?: "" )
+                    setResult(Activity.RESULT_OK, data)
+                    finish()
+                }*/
+            }
+            else -> super.onActivityResult(requestCode, resultCode, data)
+        }
+    }
+
+
 
     override fun onRecognitionSuccess(card: TapCard?) {
         println("cardNumber>>>>"+card)
@@ -95,9 +116,18 @@ class ScannerActivity : AppCompatActivity(), TapTextRecognitionCallBack, TapScan
 
     }
 
+  /*  override fun onScanCardFailed(e: Exception?) {
+        Toast.makeText(this@ScannerActivity, e?.message.toString(), Toast.LENGTH_LONG).show()
+    }
+
+    override fun onScanCardFinished(card: Card?, cardImage: ByteArray?) {
+        Toast.makeText(this@ScannerActivity, card?.cardNumber.toString(), Toast.LENGTH_LONG).show()
+
+    }*/
     override fun onBackPressed() {
         super.onBackPressed()
         finish()
 
     }
+
 }

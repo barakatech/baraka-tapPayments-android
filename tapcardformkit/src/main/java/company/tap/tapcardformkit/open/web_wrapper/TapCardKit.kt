@@ -19,7 +19,7 @@ import androidx.core.view.*
 import com.google.gson.Gson
 import company.tap.nfcreader.open.utils.TapNfcUtils
 import company.tap.tapcardformkit.*
-import company.tap.tapcardformkit.open.DataConfiguration
+import company.tap.tapcardformkit.open.CardDataConfiguration
 import company.tap.tapcardformkit.open.web_wrapper.data.CardFormWebStatus
 import company.tap.tapcardformkit.open.web_wrapper.data.CardWebUrlPrefix
 import company.tap.tapcardformkit.open.web_wrapper.data.network.model.ThreeDsResponse
@@ -29,6 +29,7 @@ import company.tap.tapcardformkit.open.web_wrapper.data.firstRunKeySharedPrefren
 import company.tap.tapcardformkit.open.web_wrapper.data.keyValueName
 import company.tap.tapcardformkit.open.web_wrapper.data.urlWebStarter
 import company.tap.tapcardformkit.open.web_wrapper.presentation.scanner_activity.ScannerActivity
+//import company.tap.tapcardformkit.open.web_wrapper.presentation.scanner_activity.ScannerActivity
 import company.tap.tapcardformkit.open.web_wrapper.presentation.threeDsWebView.ThreeDsWebViewActivity
 import company.tap.tapuilibrary.themekit.ThemeManager
 import company.tap.tapuilibrary.uikit.atoms.*
@@ -127,17 +128,17 @@ class TapCardKit : LinearLayout {
         cardNumber: String = "",
         cardExpiry: String = "",
         cardCvv: String = "",
-        cardHolderName: String =""
+        cardHolderName: String = ""
     ) {
 
         MainScope().launch {
             getCardUrlPrefixFromApi()
             getDeviceLocation()
             cardPrefillPair = Pair(cardNumber, cardExpiry)
-            cardExtraPrefillPair = Pair(cardCvv,cardHolderName)
+            cardExtraPrefillPair = Pair(cardCvv, cardHolderName)
             applyThemeForShimmer()
             val url =
-                "${cardUrlPrefix}${encodeConfigurationMapToUrl(DataConfiguration.configurationsAsHashMap)}"
+                "${cardUrlPrefix}${encodeConfigurationMapToUrl(CardDataConfiguration.configurationsAsHashMap)}"
             Log.e("url", url)
              cardWebview.loadUrl(url)
         }
@@ -171,7 +172,11 @@ class TapCardKit : LinearLayout {
 
             } catch (e: Exception) {
                 //   Log.e("error",e.message.toString())
-                cardUrlPrefix = urlWebStarter
+                if(urlWebStarter.isNullOrBlank()){
+                    urlWebStarter  = "https://sdk.beta.tap.company/v2/card/wrapper?configurations="
+                }
+                cardUrlPrefix =  urlWebStarter
+                println("cardUrlPrefix>>>"+cardUrlPrefix)
             }
         }
     }
@@ -181,7 +186,7 @@ class TapCardKit : LinearLayout {
          * need to be refactored : mulitple copies of same code
          */
 
-        val tapInterface = DataConfiguration.configurationsAsHashMap?.get("interface") as? Map<*, *>
+        val tapInterface = CardDataConfiguration.configurationsAsHashMap?.get("interface") as? Map<*, *>
         var lanugage =
             tapInterface?.get("locale")?.toString() ?: getDeviceLocale()?.language
         if (lanugage == "dynamic") {
@@ -203,7 +208,7 @@ class TapCardKit : LinearLayout {
     private fun setTapThemeAndLanguage(context: Context, language: String?, themeMode: String?) {
         when (themeMode) {
             TapTheme.light.name -> {
-                DataConfiguration.setTheme(
+                CardDataConfiguration.setTheme(
                     context, context.resources, null,
                     R.raw.defaultlighttheme, TapTheme.light.name
                 )
@@ -211,7 +216,7 @@ class TapCardKit : LinearLayout {
             }
 
             TapTheme.dark.name -> {
-                DataConfiguration.setTheme(
+                CardDataConfiguration.setTheme(
                     context, context.resources, null,
                     R.raw.defaultdarktheme, TapTheme.dark.name
                 )
@@ -220,7 +225,7 @@ class TapCardKit : LinearLayout {
 
             else -> {}
         }
-        DataConfiguration.setLocale(
+        CardDataConfiguration.setLocale(
             this.context,
             language ?: "en",
             null,
@@ -266,7 +271,7 @@ class TapCardKit : LinearLayout {
                         init()
                         Pref.setValue(context, firstRunKeySharedPrefrence, "false")
                     } else {
-                        DataConfiguration.getTapCardStatusListener()?.onReady()
+                        CardDataConfiguration.getTapCardStatusListener()?.onCardReady()
                         /**
                          * here we send ip Address to front end
                          */
@@ -301,7 +306,7 @@ class TapCardKit : LinearLayout {
                         request?.url?.getQueryParameterFromUri(keyValueName).toString()
                     when (validInputValue.toBoolean()) {
                         true -> {
-                            DataConfiguration.getTapCardStatusListener()?.onValidInput(
+                            CardDataConfiguration.getTapCardStatusListener()?.onValidInput(
                                 request?.url?.getQueryParameterFromUri(keyValueName).toString()
                             )
 
@@ -313,17 +318,17 @@ class TapCardKit : LinearLayout {
                 }
                 if (request?.url.toString().contains(CardFormWebStatus.onError.name)) {
                     cardUrlPrefix = null
-                    DataConfiguration.getTapCardStatusListener()
-                        ?.onError(request?.url?.getQueryParameterFromUri(keyValueName).toString())
+                    CardDataConfiguration.getTapCardStatusListener()
+                        ?.onCardError(request?.url?.getQueryParameterFromUri(keyValueName).toString())
                 }
                 if (request?.url.toString().contains(CardFormWebStatus.onFocus.name)) {
-                    DataConfiguration.getTapCardStatusListener()?.onFocus()
+                    CardDataConfiguration.getTapCardStatusListener()?.onCardFocus()
 
                 }
                 if (request?.url.toString().contains(CardFormWebStatus.onSuccess.name)) {
                     cardUrlPrefix = null
-                    DataConfiguration.getTapCardStatusListener()
-                        ?.onSuccess(request?.url?.getQueryParameterFromUri(keyValueName).toString())
+                    CardDataConfiguration.getTapCardStatusListener()
+                        ?.onCardSuccess(request?.url?.getQueryParameterFromUri(keyValueName).toString())
                 }
                 if (request?.url.toString().contains(CardFormWebStatus.onHeightChange.name)) {
                     val newHeight = request?.url?.getQueryParameter(keyValueName)
@@ -331,13 +336,13 @@ class TapCardKit : LinearLayout {
                     params?.height = webViewFrame.context.getDimensionsInDp(newHeight?.toInt() ?: 95)
                     webViewFrame.layoutParams = params
 
-                    DataConfiguration.getTapCardStatusListener()
+                    CardDataConfiguration.getTapCardStatusListener()
                         ?.onHeightChange(newHeight.toString())
 
 
                 }
                 if (request?.url.toString().contains(CardFormWebStatus.onBinIdentification.name)) {
-                    DataConfiguration.getTapCardStatusListener()
+                    CardDataConfiguration.getTapCardStatusListener()
                         ?.onBindIdentification(
                             request?.url?.getQueryParameterFromUri(keyValueName).toString()
                         )
@@ -349,10 +354,14 @@ class TapCardKit : LinearLayout {
                      */
                     val queryParams =
                         request?.url?.getQueryParameterFromUri(keyValueName).toString()
-                    threeDsResponse = queryParams.getModelFromJson()
+                    threeDsResponse =  queryParams.getModelFromJson()
                     navigateTo3dsActivity()
 
 
+                }
+                if (request?.url.toString().contains(CardFormWebStatus.onChangeSaveCardLater.name)) {
+                    CardDataConfiguration.getTapCardStatusListener()
+                        ?.onChangeSaveCard(request?.url?.getQueryParameterFromUri(keyValueName).toBoolean())
                 }
                 if (request?.url.toString().contains(CardFormWebStatus.onScannerClick.name)) {
                     /**
@@ -378,8 +387,8 @@ class TapCardKit : LinearLayout {
                         val intent = Intent(context, NFCBottomSheetActivity()::class.java)
                         (context).startActivity(intent)
                     } else {
-                        DataConfiguration.getTapCardStatusListener()
-                            ?.onError("NFC is not supported on this device")
+                        CardDataConfiguration.getTapCardStatusListener()
+                            ?.onCardError("NFC is not supported on this device")
                     }
 
 
@@ -450,6 +459,8 @@ fun  WebView.handleSSlError(error: SslError?, handler: SslErrorHandler?){
     } else {
         handler?.proceed()
     }
+
+
 }
 
 
