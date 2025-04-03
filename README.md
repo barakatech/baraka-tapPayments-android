@@ -22,7 +22,9 @@ Code changes:
 
 # Integration Flow
 1. Add Tap Payments dependency to your gradle file
-
+``` groovy
+com.github.AlexDBaraka:TapPayments-Card-Android:v1.1.19
+```
 2. Add Tap Payments Card Kit UI element to your XML layout and don't forget to hide it
   ```xml
   <company.tap.tapcardformkit.open.web_wrapper.TapCardKit
