@@ -1,8 +1,9 @@
 package company.tap.tapcardformkit.open.web_wrapper
 
-import Headers
+
 import android.content.Context
 import android.util.Log
+import com.tap.commondatamodels.Headers
 import company.tap.tapcardformkit.R
 import company.tap.tapcardformkit.open.CardDataConfiguration
 import company.tap.tapcardformkit.open.CardDataConfiguration.configurationsAsHashMap
@@ -33,8 +34,6 @@ class TapCardConfiguration {
             tapCardStatusDelegate: TapCardStatusDelegate? = null,
             cardNumber: String = "",
             cardExpiry: String = "",
-            cardCvv: String = "",
-            cardHolderName : String= ""
         ) {
 
             MainScope().launch {
@@ -44,9 +43,7 @@ class TapCardConfiguration {
                     context,
                     tapCardStatusDelegate,
                     cardNumber,
-                    cardExpiry,
-                    cardCvv,
-                    cardHolderName
+                    cardExpiry
                 )
             }
 
@@ -70,9 +67,6 @@ class TapCardConfiguration {
             }*/
         }
 
-        fun removeTapCardStatusDelegate() {
-            CardDataConfiguration.removeTapCardStatusDelegate()
-        }
 
         fun addOperatorHeaderField(
             tapCardInputViewWeb: TapCardKit?,
@@ -112,9 +106,7 @@ class TapCardConfiguration {
             context: Context,
             tapCardStatusDelegate: TapCardStatusDelegate?,
             cardNumber: String,
-            cardExpiry: String,
-            cardCvv: String,
-            cardHolderName: String
+            cardExpiry: String
         ) {
 
             try {
@@ -135,9 +127,7 @@ class TapCardConfiguration {
                     context,
                     tapCardStatusDelegate,
                     cardNumber,
-                    cardExpiry,
-                    cardCvv,
-                    cardHolderName
+                    cardExpiry
                 )
                 urlWebStarter = BASE_URL
                 println("urlWebStarter>>>"+urlWebStarter)
@@ -165,9 +155,7 @@ class TapCardConfiguration {
             context: Context,
             tapCardStatusDelegate: TapCardStatusDelegate? = null,
             cardNumber: String = "",
-            cardExpiry: String = "",
-            cardCvv: String = "",
-            cardHolderName: String = ""
+            cardExpiry: String = ""
         ) {
             with(tapMapConfiguration) {
                 configurationsAsHashMap = tapMapConfiguration
@@ -179,12 +167,7 @@ class TapCardConfiguration {
                     publickKey.toString()
                 )
                 CardDataConfiguration.addTapCardStatusDelegate(tapCardStatusDelegate)
-                tapCardInputViewWeb?.init(
-                    cardNumber.filter { it.isDigit() },
-                    cardExpiry,
-                    cardCvv,
-                    cardHolderName
-                )
+                tapCardInputViewWeb?.init(cardNumber.filter { it.isDigit() }, cardExpiry)
 
 
             }
