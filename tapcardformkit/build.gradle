@@ -69,7 +69,9 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    api 'com.github.Tap-Payments:TapNFCCardReaderKit-Android:0.0.6'
+    implementation('com.github.Tap-Payments:TapNFCCardReaderKit-Android:0.0.6') {
+        exclude group: 'com.flurry.android', module: 'analytics'
+    }
 
     implementation 'io.reactivex.rxjava3:rxjava:3.1.5'
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.2'
@@ -79,9 +81,6 @@ dependencies {
     api 'com.squareup.retrofit2:retrofit:2.9.0'
     api 'com.squareup.okhttp3:logging-interceptor:4.10.0'
     api 'com.github.Tap-Payments:LocalisationManager-Android:0.0.1.34'
-
-   // api 'com.github.Tap-Payments:TapCardScannerKit-Android:0.0.10.2'
-  //  api 'com.github.Tap-Payments:TapCardScannerKit-Android:0.0.11.7'
     api 'com.koushikdutta.ion:ion:3.1.0'
 
     api 'com.github.Tap-Payments:CommonDataModelsWeb-Andriod:0.0.15'

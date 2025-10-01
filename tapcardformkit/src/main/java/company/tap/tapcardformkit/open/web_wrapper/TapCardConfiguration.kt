@@ -34,8 +34,9 @@ class TapCardConfiguration {
             tapCardStatusDelegate: TapCardStatusDelegate? = null,
             cardNumber: String = "",
             cardExpiry: String = "",
+            cardCvv: String = "",
+            cardHolderName : String= ""
         ) {
-
             MainScope().launch {
                 getTapSDKConfigUrls(
                     tapMapConfiguration,
@@ -43,30 +44,12 @@ class TapCardConfiguration {
                     context,
                     tapCardStatusDelegate,
                     cardNumber,
-                    cardExpiry
+                    cardExpiry,
+                    cardCvv,
+                    cardHolderName
                 )
             }
-
-
-            /*  GlobalScope.launch {
-           // delay(1800)
-
-            with(tapMapConfiguration) {
-                configurationsAsHashMap = tapMapConfiguration
-                val operator = configurationsAsHashMap?.get(operatorKey) as HashMap<*, *>
-                val publickKey = operator.get(publicKeyToGet)
-                addOperatorHeaderField(
-                    tapCardInputViewWeb,
-                    context,
-                    publickKey.toString()
-                )
-                DataConfiguration.addTapCardStatusDelegate(tapCardStatusDelegate)
-                tapCardInputViewWeb?.init(cardNumber.filter { it.isDigit() }, cardExpiry)
-
-
-            }*/
         }
-
 
         fun addOperatorHeaderField(
             tapCardInputViewWeb: TapCardKit?,
@@ -95,10 +78,11 @@ class TapCardConfiguration {
             hashMapHeader[HeadersMdn] = headers.mdn.toString()
             hashMapHeader[HeadersApplication] = headers.application.toString()
             configurationsAsHashMap?.put(headersKey, hashMapHeader)
-
-
         }
 
+        fun removeTapCardStatusDelegate() {
+            CardDataConfiguration.removeTapCardStatusDelegate()
+        }
 
         private suspend fun getTapSDKConfigUrls(
             tapMapConfiguration: HashMap<String, Any>,
@@ -106,9 +90,10 @@ class TapCardConfiguration {
             context: Context,
             tapCardStatusDelegate: TapCardStatusDelegate?,
             cardNumber: String,
-            cardExpiry: String
+            cardExpiry: String,
+            cardCvv: String,
+            cardHolderName : String
         ) {
-
             try {
                 /**
                  * request to get Tap configs
@@ -127,11 +112,12 @@ class TapCardConfiguration {
                     context,
                     tapCardStatusDelegate,
                     cardNumber,
-                    cardExpiry
+                    cardExpiry,
+                    cardCvv,
+                    cardHolderName
                 )
                 urlWebStarter = BASE_URL
                 println("urlWebStarter>>>"+urlWebStarter)
-
             } catch (e: Exception) {
                 BASE_URL = urlWebStarter
                 testEncKey =  tapCardInputViewWeb?.context?.resources?.getString(R.string.enryptkey)
@@ -155,7 +141,9 @@ class TapCardConfiguration {
             context: Context,
             tapCardStatusDelegate: TapCardStatusDelegate? = null,
             cardNumber: String = "",
-            cardExpiry: String = ""
+            cardExpiry: String = "",
+            cardCvv: String = "",
+            cardHolderName : String = ""
         ) {
             with(tapMapConfiguration) {
                 configurationsAsHashMap = tapMapConfiguration
@@ -167,12 +155,9 @@ class TapCardConfiguration {
                     publickKey.toString()
                 )
                 CardDataConfiguration.addTapCardStatusDelegate(tapCardStatusDelegate)
-                tapCardInputViewWeb?.init(cardNumber.filter { it.isDigit() }, cardExpiry)
-
-
+                tapCardInputViewWeb?.init(cardNumber.filter { it.isDigit() }, cardExpiry, cardCvv, cardHolderName)
             }
         }
-
 
         private fun getPublicEncryptionKey(
             publicKey: String?,
