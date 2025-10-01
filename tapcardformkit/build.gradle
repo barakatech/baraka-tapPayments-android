@@ -60,6 +60,27 @@ android {
     buildFeatures {
         buildConfig true
     }
+    // Include assets and resources
+    sourceSets {
+        main {
+            java.srcDirs += 'src/main/java'
+            kotlin.srcDirs += 'src/main/kotlin'
+            res.srcDirs += 'src/main/res'
+            assets.srcDirs += 'src/main/assets'   // <-- ensures assets are packaged in AAR
+        }
+
+    }
+
+
+        libraryVariants.all { variant ->
+            variant.mergeAssetsProvider.get().doLast {
+                def destDir = variant.mergeAssetsProvider.get().outputDir.get().asFile
+                project.copy { CopySpec spec ->
+                    spec.from("${projectDir}/src/main/assets")
+                    spec.into(destDir)
+                }
+            }
+        }
 }
 
 dependencies {
@@ -132,20 +153,17 @@ afterEvaluate {
     publishing {
         publications {
             create("release", MavenPublication) {
-                // Publish AAR
                 artifact("$buildDir/outputs/aar/${project.name}-release.aar") {
                     builtBy tasks.named("assembleRelease")
                 }
 
-                // Attach sources and javadoc
                 artifact(tasks.named("releaseSourcesJar"))
                 artifact(tasks.named("releaseJavadoc"))
 
                 groupId = "com.github.Tap-Payments"
                 artifactId = "Card-Android"
-                version = "1.0.8"
+                version = "1.0.10"
 
-                // Variant-aware: ensure dependencies are included in POM
                 pom.withXml {
                     def dependenciesNode = asNode().appendNode('dependencies')
                     configurations.api.allDependencies.each { dep ->
@@ -160,7 +178,8 @@ afterEvaluate {
         }
     }
 
-    // Ensure metadata waits for sources/javadoc
+
+    // ✅ Ensure metadata waits for sources/javadoc
     tasks.named("generateMetadataFileForReleasePublication") {
         dependsOn(tasks.named("releaseSourcesJar"))
         dependsOn(tasks.named("releaseJavadoc"))
