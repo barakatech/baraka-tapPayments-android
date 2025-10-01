@@ -1,22 +1,29 @@
 package company.tap.tapcardformkit.open.web_wrapper.presentation.scanner_activity
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.webkit.WebView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
-import company.tap.cardscanner.CameraFragment
-import company.tap.cardscanner.TapCard
-import company.tap.cardscanner.TapScannerCallback
-import company.tap.cardscanner.TapTextRecognitionCallBack
-import company.tap.cardscanner.TapTextRecognitionML
+
+import company.tap.tapcardformkit.open.web_wrapper.internal.scanner.TapScannerCallback
+import company.tap.tapcardformkit.open.web_wrapper.internal.scanner.TapTextRecognitionCallBack
+import company.tap.tapcardformkit.open.web_wrapper.internal.scanner.TapCard
+import company.tap.tapcardformkit.open.web_wrapper.internal.scanner.CameraFragment
+import company.tap.tapcardformkit.open.web_wrapper.internal.scanner.TapTextRecognitionML
+
 import company.tap.tapcardformkit.R
 import company.tap.tapcardformkit.open.web_wrapper.TapCardKit
 import company.tap.tapcardformkit.open.web_wrapper.TapCardKit.Companion.fillCardNumber
 
 private const val SCAN_CARD_ID = 101
+private const val CAMERA_PERMISSION_REQUEST_CODE = 200
 
 class ScannerActivity : AppCompatActivity(), TapTextRecognitionCallBack, TapScannerCallback{
     //InlineViewCallback {
@@ -39,11 +46,14 @@ class ScannerActivity : AppCompatActivity(), TapTextRecognitionCallBack, TapScan
 //        startActivity(chooseImageIntent)
       //  val intent = ScanCardIntent.Builder(this).build()
       //  startActivityForResult(intent, SCAN_CARD_ID)
+        if (isCameraPermissionGranted()) {
+            supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.inline_container, CameraFragment())
+                .commit()
 
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.inline_container, CameraFragment())
-            .commit()
+        }else  requestCameraPermission()
+
 //        supportFragmentManager
 //            .beginTransaction()
 //            .replace(company.tap.tapcardformkit.R.id.inline_container, CameraFragment())
@@ -129,5 +139,43 @@ class ScannerActivity : AppCompatActivity(), TapTextRecognitionCallBack, TapScan
         finish()
 
     }
+    private fun isCameraPermissionGranted(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            android.Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestCameraPermission() {
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.CAMERA),
+            CAMERA_PERMISSION_REQUEST_CODE
+        )
+    }
+
+    private fun openCameraFragment() {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.inline_container, CameraFragment())
+            .commit()
+    }
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openCameraFragment()
+            } else {
+                Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show()
+                finish()
+            }
+        }
+    }
+
+
 
 }

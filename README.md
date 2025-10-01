@@ -138,4 +138,3 @@ private fun configureTokenization(input: TapPaymentsInput) {
 ```
 
 ## For more infos please refer to source [documentation](https://developers.tap.company/docs/card-sdk-android)
-

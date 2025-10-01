@@ -4,13 +4,13 @@ plugins {
     id 'com.google.gms.google-services'
 }
 android {
-    compileSdkVersion 34
+    compileSdkVersion 36
 
 
     defaultConfig {
         applicationId "com.example.tapcardwebsdk"
         minSdkVersion 24
-        targetSdkVersion 34
+        targetSdkVersion 36
         versionCode 4
         versionName "1.0.14"
         multiDexEnabled true
@@ -27,16 +27,16 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     configurations.all {
         resolutionStrategy {
-            force "org.jetbrains.kotlin:kotlin-stdlib:1.7.10"
+
         }
     }
     kotlinOptions {
-        jvmTarget = '11'
+        jvmTarget = '17'
     }
     namespace 'com.example.tapcardwebsdk'
 }
@@ -47,14 +47,10 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-   implementation project(path: ':tapcardformkit')
+    implementation project(path: ':tapcardformkit')
     implementation "androidx.activity:activity-ktx:1.5.1"
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'androidx.preference:preference:1.2.1'
     implementation 'com.google.android.material:material:1.4.0'
-//    implementation 'com.github.Tap-Payments:Card-Android:0.0.0.9'
-
     implementation 'com.github.Tap-Payments:TapAndroidForm:0.0.3'
-
-
 }

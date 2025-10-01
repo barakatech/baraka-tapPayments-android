@@ -1,6 +1,6 @@
 package company.tap.tapcardformkit.open.web_wrapper
 
-import TapTheme
+
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
@@ -15,8 +15,8 @@ import android.view.ViewGroup
 import android.webkit.*
 import android.widget.*
 import androidx.annotation.RequiresApi
-import androidx.core.view.*
 import com.google.gson.Gson
+import com.tap.commondatamodels.TapTheme
 import company.tap.nfcreader.open.utils.TapNfcUtils
 import company.tap.tapcardformkit.*
 import company.tap.tapcardformkit.open.CardDataConfiguration
@@ -28,11 +28,12 @@ import company.tap.tapcardformkit.open.web_wrapper.data.cache.pref.Pref
 import company.tap.tapcardformkit.open.web_wrapper.data.firstRunKeySharedPrefrence
 import company.tap.tapcardformkit.open.web_wrapper.data.keyValueName
 import company.tap.tapcardformkit.open.web_wrapper.data.urlWebStarter
+import company.tap.tapcardformkit.open.web_wrapper.internal.ThemeManager
 import company.tap.tapcardformkit.open.web_wrapper.presentation.scanner_activity.ScannerActivity
 //import company.tap.tapcardformkit.open.web_wrapper.presentation.scanner_activity.ScannerActivity
 import company.tap.tapcardformkit.open.web_wrapper.presentation.threeDsWebView.ThreeDsWebViewActivity
-import company.tap.tapuilibrary.themekit.ThemeManager
-import company.tap.tapuilibrary.uikit.atoms.*
+
+
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import java.net.URLEncoder
@@ -128,22 +129,22 @@ class TapCardKit : LinearLayout {
         cardNumber: String = "",
         cardExpiry: String = "",
         cardCvv: String = "",
-        cardHolderName: String = ""
+        cardHolderName: String =""
     ) {
 
-        MainScope().launch {
-            getCardUrlPrefixFromApi()
-            getDeviceLocation()
-            cardPrefillPair = Pair(cardNumber, cardExpiry)
-            cardExtraPrefillPair = Pair(cardCvv, cardHolderName)
-            applyThemeForShimmer()
-            val url =
-                "${cardUrlPrefix}${encodeConfigurationMapToUrl(CardDataConfiguration.configurationsAsHashMap)}"
-            Log.e("url", url)
-             cardWebview.loadUrl(url)
+        if (cardUrlPrefix == null) {
+            MainScope().launch {
+                getCardUrlPrefixFromApi()
+                getDeviceLocation()
+                cardPrefillPair = Pair(cardNumber, cardExpiry)
+                cardExtraPrefillPair = Pair(cardCvv,cardHolderName)
+                applyThemeForShimmer()
+                val url =
+                    "${cardUrlPrefix}${encodeConfigurationMapToUrl(CardDataConfiguration.configurationsAsHashMap)}"
+                Log.e("url", url)
+                cardWebview.loadUrl(url)
+            }
         }
-
-
     }
 
     private suspend fun getDeviceLocation() {
@@ -161,23 +162,21 @@ class TapCardKit : LinearLayout {
     }
 
     private suspend fun getCardUrlPrefixFromApi() {
-        if (cardUrlPrefix == null) {
-            try {
-                val usersResponse = cardConfigurationApi.getCardConfiguration()
-                if (usersResponse.android.toString()
-                        .contains(BuildConfig.VERSION_CODE.toString())
-                ) {
-                    cardUrlPrefix = usersResponse.android.`50`
-                }
-
-            } catch (e: Exception) {
-                //   Log.e("error",e.message.toString())
-                if(urlWebStarter.isNullOrBlank()){
-                    urlWebStarter  = "https://sdk.beta.tap.company/v2/card/wrapper?configurations="
-                }
-                cardUrlPrefix =  urlWebStarter
-                println("cardUrlPrefix>>>"+cardUrlPrefix)
+        try {
+            val usersResponse = cardConfigurationApi.getCardConfiguration()
+            if (usersResponse.android.toString()
+                    .contains(BuildConfig.VERSION_CODE.toString())
+            ) {
+                cardUrlPrefix = usersResponse.android.`50`
             }
+
+        } catch (e: Exception) {
+            //   Log.e("error",e.message.toString())
+            if(urlWebStarter.isNullOrBlank()){
+                urlWebStarter  = "https://sdk.beta.tap.company/v2/card/wrapper?configurations="
+            }
+            cardUrlPrefix =  urlWebStarter
+            println("cardUrlPrefix>>>"+cardUrlPrefix)
         }
     }
 
@@ -289,8 +288,8 @@ class TapCardKit : LinearLayout {
                                     fillCardNumber(
                                         cardNumber = cardPrefillPair.first,
                                         expiryDate = cardPrefillPair.second,
-                                        cvv = cardExtraPrefillPair.first,
-                                        cardHolderName = cardExtraPrefillPair.second
+                                        cardExtraPrefillPair.first,
+                                        cardExtraPrefillPair.second
                                     )
                                 }
                             }
