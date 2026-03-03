@@ -138,14 +138,19 @@ object CardDataConfiguration {
         tapCardStatusDelegate: TapCardStatusDelegate ,
         tapCardKit: TapCardKit,
         cardNumber: String = "",
-        cardExpiry: String = ""
+        cardExpiry: String = "",
+        cardCvv: String = "",
+        cardHolderName: String = ""
     ) {
         TapCardConfiguration.configureWithTapCardDictionaryConfiguration(
             context = activity,
             tapCardInputViewWeb = tapCardKit,
             tapMapConfiguration = configurations,
             tapCardStatusDelegate = tapCardStatusDelegate,
-            cardNumber = cardNumber ?: "", cardExpiry = cardExpiry ?: ""
+            cardNumber = cardNumber ?: "",
+            cardExpiry = cardExpiry ?: "",
+            cardCvv = cardCvv ?: "",
+            cardHolderName = cardHolderName ?: ""
         )
 
     }
