@@ -11,6 +11,7 @@ import android.os.Build
 import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.webkit.*
 import android.widget.*
@@ -117,6 +118,10 @@ class TapCardKit : LinearLayout {
                 useWideViewPort = true
                 loadWithOverviewMode = true
             }
+            // Disable scrollbars visually
+            isVerticalScrollBarEnabled = false
+            isHorizontalScrollBarEnabled = false
+            scrollBarStyle = View.SCROLLBARS_INSIDE_OVERLAY
             webViewClient = MyWebViewClient()
             setBackgroundColor(Color.TRANSPARENT)
             setLayerType(LAYER_TYPE_SOFTWARE, null)
@@ -315,6 +320,15 @@ class TapCardKit : LinearLayout {
                     }
 
                 }
+                if (request?.url.toString().contains(CardFormWebStatus.onInvalidInput.name)) {
+                    val InvalidInputValue =
+                        request?.url?.getQueryParameterFromUri(keyValueName).toString()
+                    CardDataConfiguration.getTapCardStatusListener()?.onInValidInput(
+                                request?.url?.getQueryParameterFromUri(keyValueName).toBoolean()
+                            )
+
+                        }
+
                 if (request?.url.toString().contains(CardFormWebStatus.onError.name)) {
                     cardUrlPrefix = null
                     CardDataConfiguration.getTapCardStatusListener()
@@ -332,7 +346,7 @@ class TapCardKit : LinearLayout {
                 if (request?.url.toString().contains(CardFormWebStatus.onHeightChange.name)) {
                     val newHeight = request?.url?.getQueryParameter(keyValueName)
                     val params: ViewGroup.LayoutParams? = webViewFrame.layoutParams
-                    params?.height = webViewFrame.context.getDimensionsInDp(newHeight?.toInt() ?: 95)
+                    params?.height = webViewFrame.context.getDimensionsInDp(newHeight?.toInt()?.plus(15) ?: 95)
                     webViewFrame.layoutParams = params
 
                     CardDataConfiguration.getTapCardStatusListener()
@@ -406,6 +420,14 @@ class TapCardKit : LinearLayout {
             error: SslError?
         ) {
             view?.handleSSlError(error,handler)
+        }
+        override fun onPageFinished(view: WebView, url: String?) {
+            super.onPageFinished(view, url)
+            // ✅ Disable scrolling within the web page content
+            view.evaluateJavascript(
+                "document.body.style.overflow='hidden';document.documentElement.style.overflow='hidden';",
+                null
+            )
         }
 
     }

@@ -171,6 +171,8 @@ interface TapCardStatusDelegate {
 
     fun onValidInput(isValid: String)
 
+    fun onInValidInput(isValid: Boolean)
+
 
     fun onCardError(error: String)
 
