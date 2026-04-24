@@ -25,8 +25,6 @@ import company.tap.tapcardformkit.open.web_wrapper.data.CardFormWebStatus
 import company.tap.tapcardformkit.open.web_wrapper.data.CardWebUrlPrefix
 import company.tap.tapcardformkit.open.web_wrapper.data.network.model.ThreeDsResponse
 import company.tap.tapcardformkit.open.web_wrapper.presentation.nfc_activity.nfcbottomsheet.NFCBottomSheetActivity
-import company.tap.tapcardformkit.open.web_wrapper.data.cache.pref.Pref
-import company.tap.tapcardformkit.open.web_wrapper.data.firstRunKeySharedPrefrence
 import company.tap.tapcardformkit.open.web_wrapper.data.keyValueName
 import company.tap.tapcardformkit.open.web_wrapper.data.urlWebStarter
 import company.tap.tapcardformkit.open.web_wrapper.internal.ThemeManager
@@ -264,46 +262,18 @@ class TapCardKit : LinearLayout {
                  * listen for states of cardWebStatus of onReady , onValidInput .. etc
                  */
                 if (request?.url.toString().contains(CardFormWebStatus.onReady.name)) {
-                    /**
-                     * this scenario only for the first launch of the app , due to issue navigation
-                     * of webview after shimmering , if issue appears [in first install only] init function isCalled again .
-                     *
-                     *
-                     */
-                    val isFirstTime = Pref.getValue(context, firstRunKeySharedPrefrence, "true")
-                    if (isFirstTime == "true") {
-                        init()
-                        Pref.setValue(context, firstRunKeySharedPrefrence, "false")
-                    } else {
-                        CardDataConfiguration.getTapCardStatusListener()?.onCardReady()
-                        /**
-                         * here we send ip Address to front end
-                         */
-                        if (userIpAddress.isNotEmpty()) {
-                            setIpAddress(userIpAddress)
-                        }
-                        /**
-                         * here we ensure prefilling card with numbers passed from merchant
-                         * commented for now
-                         */
-
-                        when (cardPrefillPair.first.isNotBlank()) {
-                            true -> {
-                                if (cardPrefillPair.first.length >= 7) {
-                                    fillCardNumber(
-                                        cardNumber = cardPrefillPair.first,
-                                        expiryDate = cardPrefillPair.second,
-                                        cardExtraPrefillPair.first,
-                                        cardExtraPrefillPair.second
-                                    )
-                                }
-                            }
-
-                            false -> {}
-                        }
-
+                    CardDataConfiguration.getTapCardStatusListener()?.onCardReady()
+                    if (userIpAddress.isNotEmpty()) {
+                        setIpAddress(userIpAddress)
                     }
-
+                    if (cardPrefillPair.first.isNotBlank() && cardPrefillPair.first.length >= 7) {
+                        fillCardNumber(
+                            cardNumber = cardPrefillPair.first,
+                            expiryDate = cardPrefillPair.second,
+                            cardExtraPrefillPair.first,
+                            cardExtraPrefillPair.second
+                        )
+                    }
                 }
                 if (request?.url.toString().contains(CardFormWebStatus.onValidInput.name)) {
                     val validInputValue =
